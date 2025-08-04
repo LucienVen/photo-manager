@@ -133,3 +133,6 @@ records/
 # 临时文档
 COMMIT_SUMMARY.md
 COMMIT_MESSAGE.md
+
+# 临时测试图片目录
+test-images/

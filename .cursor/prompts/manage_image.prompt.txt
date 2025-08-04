@@ -1,0 +1,21 @@
+你正在协助开发一个图床管理工具，包含以下关键特性：
+
+- 使用 Python 脚本处理图片上传、缩略图生成、记录信息存储；
+- 每张图片记录以 JSON 格式写入到按年月分组的 records 文件夹中；
+- 文件 hash（SHA256）用于重命名、去重；
+- 生成 CDN 地址与缩略图地址，路径形如：images/、thumbs/；
+- 每条记录包含：filename, url, thumb_url, path, uploaded_at, tags, note, size_kb, width, height, hash；
+- 前端使用 Vue3 构建，可通过输入框设置 tags 和 note；
+- 命令行支持多种参数格式，例如：
+# pic-go 图片本地路径 tags:标签[tag1,tag2...] desc:描述note  
+$ pic-go demo1.jpg tags:风景,广州塔,金融城 desc:拍摄于广州
+$ pic-go demo1.jpg 风景,广州塔,金融城 拍摄于广州
+$ pic-go demo1.jpg 风景,广州塔,金融城 (只有一个参数，识别为 tags)
+$ pic-go demo1.jpg 风景(如果单独一个句子，则识别为 tags)
+$ pic-go demo1.jpg tags:风景(增加 tags标签：则识别为标签)
+$ pic-go demo1.jpg desc:风景(增加 desc标签)
+- GitHub Actions 用于同步图片和记录文件。
+
+你的任务是：在已有结构下补全高质量、可维护的 Python 逻辑，或 Vue3 页面逻辑，保持结构清晰、无多余依赖，禁止使用 emoji。
+
+输出前，请先分析任务目标、约束与已有结构，然后输出代码。

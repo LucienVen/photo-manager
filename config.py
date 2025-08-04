@@ -13,8 +13,8 @@ class Config:
     """配置类，用于管理所有环境变量"""
     
     # GitHub 配置
-    GITHUB_NAME = os.getenv('GITHUB_NAME', 'yourname')
-    GITHUB_REPO = os.getenv('GITHUB_REPO', 'photo-bed')
+    GITHUB_NAME = os.getenv('GITHUB_NAME', 'your-name')
+    GITHUB_REPO = os.getenv('GITHUB_REPO', 'your-repo')
     
     # CDN 配置
     CDN_PREFIX = os.getenv('CDN_PREFIX', 'https://cdn.jsdelivr.net/gh')
@@ -24,6 +24,9 @@ class Config:
     
     # 调试模式
     DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
+
+    # 本地记录目录
+    RECORD_DIR = os.getenv('RECORD_DIR', 'records')
     
     @classmethod
     def get_cdn_url(cls):
@@ -40,6 +43,8 @@ class Config:
         print(f"  缩略图宽度: {cls.THUMB_WIDTH}")
         print(f"  调试模式: {cls.DEBUG}")
         print(f"  完整CDN URL: {cls.get_cdn_url()}")
+        print(f"  本地记录目录: {cls.RECORD_DIR}")
+    
 
 # 创建全局配置实例
 config = Config() 

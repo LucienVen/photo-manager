@@ -1,0 +1,13 @@
+实现图床记录文件的更新逻辑，要求如下：
+
+- 所有图片记录以 JSON 存储，按月分类写入如：`records/2025-08.json`；
+- 每条记录为字典，字段包含：
+  filename, url, thumb_url, path, uploaded_at, tags, note, size_kb, width, height, hash；
+- 记录文件应读入原有内容，追加记录并写回（避免覆盖）；
+- 同一张图片（hash 相同）不重复添加；
+- 所有日期处理使用 UTC 时间戳；
+- 所有路径字段为相对路径；
+- JSON 文件需格式美观（缩进 2 个空格）；
+- 保持函数结构清晰、可复用。
+
+输出应为完整 Python 函数。

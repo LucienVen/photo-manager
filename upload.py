@@ -109,6 +109,13 @@ def upload_with_picgo(img_path):
             # 取第一个 URL（如果有多行）
             url = output.split('\n')[0].strip()
             if url.startswith('http'):
+                # 检查 URL 是否包含正确的路径结构
+                if '/images/' not in url and url.endswith(os.path.basename(img_path)):
+                    # 如果 URL 缺少 /images/ 路径，手动添加
+                    base_url = url.rsplit('/', 1)[0]  # 获取基础 URL
+                    filename = os.path.basename(img_path)
+                    url = f"{base_url}/images/{filename}"
+                    print(f"[INFO] 修正 URL 路径: {url}")
                 return url
         
         print(f"[ERROR] PicGo 返回格式异常: {output}")
@@ -139,6 +146,10 @@ def main(img_path):
     if any(r["hash"] == h for r in records):
         print(f"[SKIP] 已存在相同图片（hash: {h[:8]}...），跳过上传")
         return
+    
+    # 生成缩略图
+    thumb_path = os.path.join(THUMBS_DIR, f"{h[:8]}{ext}")
+    generate_thumbnail(img_path, thumb_path)
 
     # 使用 PicGo 上传图片
     print(f"[INFO] 正在通过 PicGo 上传: {os.path.basename(img_path)}")

@@ -1,5 +1,7 @@
 # photo-manager
-github 搭建个人图床，图床简单管理工具
+> github 搭建个人图床，图床简单管理工具
+
+[toc]
 
 
 
@@ -88,8 +90,10 @@ $ [返回 json 信息]
 
 # 环境准备
 
-* python 
+* ~~python~~ 
 * npm
+* golang
+* docker 用于打包生成可执行文件
 
 ~~~shell
 $ npm install -g picgo
@@ -125,7 +129,7 @@ https://cdn.jsdelivr.net/gh/yourname/photo-bed@main/imagesSnipaste_2024-03-29_22
 
 
 
-
+# 工作流程简述
 
 1. 脚本包装 picgo 上传图片，构建图床信息
 
@@ -137,18 +141,19 @@ https://cdn.jsdelivr.net/gh/yourname/photo-bed@main/imagesSnipaste_2024-03-29_22
 
 
 
-# python 脚本工作流程
+# golang 脚本工作流程
 
-1. 接收图片路径
-2. 生成文件 hash（SHA256 推荐）
-3. 重命名并生成缩略图（使用 ImageMagick）
-4. 将两者复制到 photo-bed 中对应目录
-5. 更新 photo-manager 中的记录文件（JSON、YAML、TOML 均可选）
-6. 支持跳过重复上传（通过 hash 检查）
+1. 读取 env 配置
+2. 接收图片路径
+3. 生成文件 hash（SHA256 推荐）
+4. 重命名并生成缩略图（使用 xxxx）
+5. 将两者复制到 photo-bed 中对应目录
+6. 更新 photo-manager 中的记录文件（JSON、YAML、TOML 均可选）
+7. 支持跳过重复上传（通过 hash 检查）
 
 
 
-## Python 脚本打包为可执行文件：
+## ~~Python 脚本打包为可执行文件：~~
 
 ~~~shell
 # 可以使用 pyinstaller 打包为 .app 或 .exe：
@@ -156,4 +161,6 @@ pip install pyinstaller
 pyinstaller --onefile upload.py
 
 ~~~
+
+
 

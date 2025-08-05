@@ -1,6 +1,6 @@
 生成一个用于图床工具的缩略图函数，要求如下：
 
-- 使用 ImageMagick 或 Pillow；
+
 - 缩略图宽度为默认为320px，实际按照.env 配置调整，高度自适应；
 - 输出路径支持指定，例如：`thumbs/<filename>`；
 - 输入为本地图片路径，输出为缩略图保存路径；
@@ -9,4 +9,4 @@
 - 上传图片原图命名为 filename.<hash>.(type),
 - 生成略缩图图片命名为 filename.thumb.<hash>.(type)
 
-请输出 Python 函数，具备良好结构和异常处理。
+请输出 golang 函数，具备良好结构和异常处理。

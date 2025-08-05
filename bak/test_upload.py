@@ -556,8 +556,8 @@ def run_all_tests():
     
     # 运行各种测试
     test_picgo_config()
-    # test_thumbnail_generation()
-    # test_photo_rename()  # 添加图片重命名测试
+    test_thumbnail_generation()
+    test_photo_rename()  # 添加图片重命名测试
     test_file_not_exists()
     test_unsupported_format()
     test_picgo_upload_direct()

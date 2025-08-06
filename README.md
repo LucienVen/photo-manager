@@ -43,7 +43,7 @@ $ [返回 json 信息]
       "path": "images/2025/08/sunset.jpg",
       "uploaded_at": "2025-08-03T23:30:00+08:00",
       "tags": ["sunset", "nature", "evening"],
-      "note": "拍摄于云南香格里拉，使用富士XT4",
+      "desc": "拍摄于云南香格里拉，使用富士XT4",
       "size_kb": 320,
       "width": 1920,
       "height": 1080,
@@ -52,19 +52,19 @@ $ [返回 json 信息]
   ]
   ```
 
-  | 字段名        | 类型     | 说明                                                            |
-  | ------------- | -------- | --------------------------------------------------------------- |
+  | 字段名        | 类型     | 说明                                                         |
+  | ------------- | -------- | ------------------------------------------------------------ |
   | `filename`    | string   | 原始文件名或别名，便于识别 , 组装 hash , 如 sunset.`<hash>`.jpg |
-  | `url`         | string   | CDN 图片地址（如 jsDelivr）                                     |
-  | thumb_url     | string   | 略缩图地址                                                      |
-  | path          | string   | 仓库中的路径（相对路径）                                        |
-  | `uploaded_at` | int      | 上传时间，时间戳                                                |
-  | `tags`        | string[] | 标签，用于搜索、分类                                            |
-  | `note`        | string   | 可选备注，描述来源或用途                                        |
-  | `size_kb`     | number   | 文件大小（KB）                                                  |
-  | `width`       | number   | 图片宽度（像素）                                                |
-  | `height`      | number   | 图片高度（像素）                                                |
-  | `hash`        | string   | 文件内容的 hash（如 MD5 或 SHA256），避免重复上传               |
+  | `url`         | string   | CDN 图片地址（如 jsDelivr）                                  |
+  | thumb_url     | string   | 略缩图地址                                                   |
+  | path          | string   | 仓库中的路径（相对路径）                                     |
+  | `uploaded_at` | int      | 上传时间，时间戳                                             |
+  | `tags`        | string[] | 标签，用于搜索、分类                                         |
+  | `desc`        | string   | 可选备注，描述来源或用途                                     |
+  | `size_kb`     | number   | 文件大小（KB）                                               |
+  | `width`       | number   | 图片宽度（像素）                                             |
+  | `height`      | number   | 图片高度（像素）                                             |
+  | `hash`        | string   | 文件内容的 hash（如 MD5 或 SHA256），避免重复上传            |
 
 # 项目代码结构(TODO)：
 

@@ -22,6 +22,7 @@ type Config struct {
 	ThumbWidth int    `env:"THUMB_WIDTH"`
 	Debug      bool   `env:"DEBUG"`
 	RecordDir  string `env:"RECORD_DIR"`
+	PicgoPath  string `env:"PICGO_PATH"`
 }
 
 func InitConfig() {
@@ -38,6 +39,10 @@ func InitConfig() {
 		log.Fatalf("Failed to load .env file from %s: %v", envPath, err)
 	}
 
+	picgoPath := os.Getenv("PICGO_PATH")
+	if picgoPath == "" {
+		picgoPath = "picgo" // 回退为 PATH 中的命令
+	}
 	// 绑定环境变量到结构体
 	EnvConfig = Config{
 		GithubName: os.Getenv("GITHUB_NAME"),
@@ -46,6 +51,7 @@ func InitConfig() {
 		ThumbWidth: getInt("THUMB_WIDTH", 320),
 		Debug:      getBool("DEBUG", false),
 		RecordDir:  os.Getenv("RECORD_DIR"),
+		PicgoPath:  picgoPath,
 	}
 
 }

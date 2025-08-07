@@ -1,39 +1,81 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/LucienVen/photo-manager/objects"
-	"log"
-	"os/exec"
-	"path/filepath"
-
 	"github.com/LucienVen/photo-manager/args"
 	"github.com/LucienVen/photo-manager/config"
+	"github.com/LucienVen/photo-manager/objects"
 	"github.com/LucienVen/photo-manager/utils"
+	"github.com/spf13/cobra"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
 )
 
+type PhotoRecord struct {
+	Filename   string   `json:"filename"`
+	URL        string   `json:"url"`
+	ThumbURL   string   `json:"thumb_url"`
+	Path       string   `json:"path"`
+	UploadedAt int64    `json:"uploaded_at"`
+	Tags       []string `json:"tags"`
+	Desc       string   `json:"desc"`
+	SizeKB     int      `json:"size_kb"`
+	Width      int      `json:"width"`
+	Height     int      `json:"height"`
+	Hash       string   `json:"hash"`
+}
+
 func main() {
+	var desc string
+	var tags string
+	var imagePath string
+
+	var rootCmd = &cobra.Command{
+		Use:   "main [image path]",
+		Short: "Image processing CLI",
+		Args:  cobra.ExactArgs(1), // 要求必须提供一个 image path
+		Run: func(cmd *cobra.Command, args []string) {
+			imagePath = args[0]
+			if _, err := os.Stat(imagePath); os.IsNotExist(err) {
+				fmt.Printf("Error: file does not exist: %s\n", imagePath)
+				os.Exit(1)
+			}
+		},
+	}
+
+	rootCmd.Flags().StringVarP(&desc, "desc", "d", "", "Image description")
+	rootCmd.Flags().StringVarP(&tags, "tags", "t", "", "Comma-separated tags")
+
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println(imagePath)
+
+	if !args.IsImageFile(imagePath) {
+		panic(fmt.Errorf("image file %s is not valid", imagePath))
+	}
+
+	argsInstance := args.NewArgs(imagePath, strings.Split(tags, ","), desc)
+	utils.PrettyPrint(argsInstance)
+
+	//return
+
 	// 加载配置
 	config.InitConfig()
 
 	cfg := config.GetConfig()
 	utils.PrettyPrint(cfg)
 
-	// 解析命令行参数
-	args, err := args.ParseArgs()
-	if err != nil {
-		log.Fatalf("参数解析失败: %v", err)
-	}
-
-	// 打印解析结果
-	fmt.Printf("解析结果: %s\n", args.String())
-
 	// TODO 环境检查
 
-	photoHash, err := utils.GetFileSHA256(args.ImagePath)
+	photoHash, err := utils.GetFileSHA256(argsInstance.ImagePath)
 	if err != nil {
-		panic(fmt.Sprintf("生成 hash 失败: err:%v, path:%s", err, args.ImagePath))
+		panic(fmt.Sprintf("生成 hash 失败: err:%v, path:%s", err, argsInstance.ImagePath))
 	}
 
 	fmt.Println("hash : ", photoHash)
@@ -41,21 +83,21 @@ func main() {
 	recordPath := filepath.Join(config.RootPath, "../", cfg.RecordDir)
 	fmt.Println("recordPath: ", recordPath)
 
-	// exist, _, err := utils.HashExists(photoHash, recordPath)
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
+	//exist, _, err := utils.HashExists(photoHash, recordPath)
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//
+	//fmt.Println("exist: ", exist)
 
-	// fmt.Println("exist: ", exist)
-
-	width, height, sizeKB, format, err := utils.GetImageInfo(args.ImagePath)
+	width, height, sizeKB, format, err := utils.GetImageInfo(argsInstance.ImagePath)
 	if err != nil {
 		log.Fatalf("获取图片信息失败: %v", err)
 	}
 	fmt.Printf("图片信息：%dx%d, %d KB, 格式: %s\n", width, height, sizeKB, format)
 
 	// 重命名图片
-	photoPath, err := utils.RenamePhoto(args.ImagePath, photoHash)
+	photoPath, err := utils.RenamePhoto(argsInstance.ImagePath, photoHash)
 	if err != nil {
 		log.Fatalf("重命名图片失败: %v", err)
 	}
@@ -70,25 +112,56 @@ func main() {
 	fmt.Println("thumbPath: ", thumbPath)
 
 	// 上传
-	cmd := exec.Command("/Users/liangliangtoo/.nvm/versions/node/v24.5.0/bin/picgo", "upload", "--json", photoPath, thumbPath)
+	picgo := config.GetConfig().PicgoPath
 
-	output, err := cmd.Output()
+	err = utils.CheckPicgoExecutable(picgo)
 	if err != nil {
-		fmt.Printf("上传失败: %v\n", err)
-		return
+		panic(err)
 	}
 
-	// 解析 JSON 返回值
-	var results []objects.PicGoResult
-	err = json.Unmarshal(output, &results)
+	uploadRes, err := utils.UploadImages(picgo, []string{photoPath, thumbPath})
 	if err != nil {
-		fmt.Printf("JSON解析失败: %v\n", err)
-		fmt.Println("原始输出：", string(output))
-		return
+		panic(err)
 	}
 
-	// 遍历每张上传结果
-	for _, r := range results {
-		fmt.Printf("文件：%s\n图片地址：%s\n\n", r.FileName, r.URL)
+	// 生成记录，写入 records
+	timenow := time.Now().Unix()
+	for _, item := range uploadRes {
+
+		record := PhotoRecord{
+			Filename:   "",
+			URL:        "",
+			ThumbURL:   "",
+			Path:       "",
+			UploadedAt: timenow,
+			Tags:       nil,
+			Desc:       "",
+			SizeKB:     0,
+			Width:      0,
+			Height:     0,
+			Hash:       "",
+		}
+
+		// 追加到 record
 	}
+
+}
+
+func (pr *PhotoRecord) GetHash() {
+
+}
+func (pr *PhotoRecord) SetHash() {
+
+}
+
+func (pr *PhotoRecord) SetImageInfo() {
+
+}
+
+func (pr *PhotoRecord) GetPath() {
+
+}
+
+func (pr *PhotoRecord) SetPath() {
+
 }

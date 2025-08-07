@@ -13,6 +13,14 @@ type Args struct {
 	Desc      string   // 描述
 }
 
+func NewArgs(path string, tags []string, desc string) *Args {
+	return &Args{
+		ImagePath: path,
+		Tags:      tags,
+		Desc:      desc,
+	}
+}
+
 // ParseArgs 解析命令行参数
 func ParseArgs() (*Args, error) {
 	args := os.Args[1:] // 跳过程序名
@@ -23,7 +31,7 @@ func ParseArgs() (*Args, error) {
 
 	// 第一个参数必须是图片路径
 	imagePath := args[0]
-	if !isImageFile(imagePath) {
+	if !IsImageFile(imagePath) {
 		return nil, fmt.Errorf("第一个参数必须是图片文件路径")
 	}
 
@@ -108,8 +116,8 @@ func parseTags(tagsStr string) []string {
 	return result
 }
 
-// isImageFile 检查是否为图片文件
-func isImageFile(filename string) bool {
+// IsImageFile 检查是否为图片文件
+func IsImageFile(filename string) bool {
 	ext := strings.ToLower(getFileExtension(filename))
 	imageExts := []string{".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg"}
 

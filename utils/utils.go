@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/LucienVen/photo-manager/config"
 	"github.com/disintegration/imaging"
 	"image"
 	_ "image/jpeg"
@@ -106,7 +106,7 @@ func GenNewFilePath(originalPath string) string {
 	base := filepath.Base(originalPath)                  // e.g. "sunset.e4d909c2.jpg"
 	name := strings.TrimSuffix(base, filepath.Ext(base)) // "sunset.e4d909c2"
 	ext := filepath.Ext(base)                            // ".jpg"
-	newFileName := name + "." + thumbTag + "." + ext     // "sunset.e4d909c2.thumb.jpg"
+	newFileName := name + "." + thumbTag + ext           // "sunset.e4d909c2.thumb.jpg"
 
 	newPath := filepath.Join(dir, newFileName)
 	return newPath
@@ -156,18 +156,55 @@ func CleanTestFile(rootPath string) error {
 }
 
 // 验证 PicGo 是否可以执行
-func CheckPicgoExecutable() {
-
-	picgo := config.GetConfig().PicgoPath
-	fmt.Println("picgo path: ", picgo)
-
-	cmd1 := exec.Command(picgo, "--version")
+func CheckPicgoExecutable(execPath string) error {
+	cmd1 := exec.Command(execPath, "--version")
 	out1, err1 := cmd1.CombinedOutput()
 	if err1 == nil {
-		fmt.Println("PicGo (from $PATH) is executable:")
+		fmt.Println("execPath (from $PATH) is executable:")
 		fmt.Println(string(out1))
-		return
-	} else {
-		fmt.Println("PicGo (from $PATH) failed:", err1)
+		return nil
 	}
+
+	return fmt.Errorf("execPath (from $PATH) failed: %v", err1)
+}
+
+// UploadImages 使用 picgo CLI 上传图片并返回上传后的 URL 列表
+func UploadImages(picgoPath string, imagePaths []string) ([]string, error) {
+	if len(imagePaths) == 0 {
+		return nil, fmt.Errorf("no images to upload")
+	}
+	
+	args := append([]string{"upload"}, imagePaths...)
+
+	cmd := exec.Command(picgoPath, args...)
+
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		return nil, fmt.Errorf("picgo error: %v\nstderr: %s", err, stderr.String())
+	}
+
+	output := stdout.String()
+	lines := strings.Split(output, "\n")
+
+	var urls []string
+	startCollect := false
+	for _, line := range lines {
+		if strings.Contains(line, "[PicGo SUCCESS]") {
+			startCollect = true
+			continue
+		}
+		if startCollect && strings.TrimSpace(line) != "" {
+			urls = append(urls, strings.TrimSpace(line))
+		}
+	}
+
+	if len(urls) == 0 {
+		return nil, fmt.Errorf("no URLs found in output: %s", output)
+	}
+
+	return urls, nil
 }

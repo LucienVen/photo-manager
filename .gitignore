@@ -137,3 +137,5 @@ COMMIT_MESSAGE.md
 # 临时测试图片目录
 test-images/
 test_images/
+
+bin/*

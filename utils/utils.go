@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/LucienVen/photo-manager/logger"
 	"github.com/disintegration/imaging"
 	"image"
 	_ "image/jpeg"
@@ -53,29 +54,29 @@ func GetImageInfo(path string) (width, height int, sizeKB int64, format string, 
 }
 
 // 重命名图片
-func RenamePhoto(originalPath, hash string) (string, error) {
+func RenamePhoto(originalPath, hash string) (newPath, newFileName string, err error) {
 
 	// 获取原文件所在目录
 	dir := filepath.Dir(originalPath)
 	base := filepath.Base(originalPath)                  // e.g. "sunset.jpg"
 	name := strings.TrimSuffix(base, filepath.Ext(base)) // "sunset"
 	ext := filepath.Ext(base)                            // ".jpg"
-	newFileName := name + "." + hash[:8] + ext           // "sunset.e4d909c2.jpg"
+	newFileName = name + "." + hash[:8] + ext            // "sunset.e4d909c2.jpg"
 
-	newPath := filepath.Join(dir, newFileName)
+	newPath = filepath.Join(dir, newFileName)
 
 	// 检查新文件名是否已存在
 	if _, err := os.Stat(newPath); err == nil {
-		return "", fmt.Errorf("文件已存在: %s", newPath)
+		return "", "", fmt.Errorf("文件已存在: %s", newPath)
 	}
 
 	// 重命名文件
-	err := os.Rename(originalPath, newPath)
+	err = os.Rename(originalPath, newPath)
 	if err != nil {
-		return "", fmt.Errorf("重命名文件失败: %v", err)
+		return "", "", fmt.Errorf("重命名文件失败: %v", err)
 	}
 
-	return newPath, nil
+	return newPath, newFileName, nil
 }
 
 // 生成略缩图，并存放与原图文件夹，并根据原图命名
@@ -160,8 +161,8 @@ func CheckPicgoExecutable(execPath string) error {
 	cmd1 := exec.Command(execPath, "--version")
 	out1, err1 := cmd1.CombinedOutput()
 	if err1 == nil {
-		fmt.Println("execPath (from $PATH) is executable:")
-		fmt.Println(string(out1))
+		logger.Debug("execPath (from $PATH) is executable:")
+		logger.Debug(string(out1))
 		return nil
 	}
 
@@ -173,7 +174,7 @@ func UploadImages(picgoPath string, imagePaths []string) ([]string, error) {
 	if len(imagePaths) == 0 {
 		return nil, fmt.Errorf("no images to upload")
 	}
-	
+
 	args := append([]string{"upload"}, imagePaths...)
 
 	cmd := exec.Command(picgoPath, args...)
@@ -207,4 +208,27 @@ func UploadImages(picgoPath string, imagePaths []string) ([]string, error) {
 	}
 
 	return urls, nil
+}
+
+// IsImageFile 检查是否为图片文件
+func IsImageFile(filename string) bool {
+	ext := strings.ToLower(getFileExtension(filename))
+	imageExts := []string{".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg"}
+
+	for _, ext2 := range imageExts {
+		if ext == ext2 {
+			return true
+		}
+	}
+
+	return false
+}
+
+// getFileExtension 获取文件扩展名
+func getFileExtension(filename string) string {
+	lastDot := strings.LastIndex(filename, ".")
+	if lastDot == -1 {
+		return ""
+	}
+	return filename[lastDot:]
 }

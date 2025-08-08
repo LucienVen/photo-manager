@@ -29,7 +29,6 @@ func InitConfig() {
 	// 自动计算项目根路径（假设 config/loader.go 调用处）
 	// 返回：repo/config/config.go
 	_, currentFile, _, _ := runtime.Caller(0)
-	fmt.Println("currentFile:", currentFile)
 
 	RootPath = filepath.Join(filepath.Dir(currentFile), "../cmd")
 

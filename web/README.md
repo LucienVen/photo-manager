@@ -1,100 +1,70 @@
-# 图床管理工具前端展示页面
+# 图床管理工具 - Vue3 前端
 
-这是一个简单的前端展示页面，用于展示图床管理工具上传的图片记录。
+一个基于 Vue3 的图床图片展示和管理工具。
 
 ## 功能特性
 
-- 📸 展示所有上传的图片记录
-- 🔍 支持按文件名、标签、描述搜索
-- 📊 显示统计信息（总图片数、显示数量、总大小）
-- 🖼️ 图片缩略图展示
-- 📱 响应式设计，支持移动端
-- 🔍 点击图片查看详细信息
-- 🎨 清爽现代的界面设计
+- 📸 图片展示和管理
+- 🔍 多条件搜索（文件名、标签、描述）
+- 📊 统计信息显示
+- 📱 响应式设计
+- 🎨 现代化界面
+- 📋 一键复制图片链接
 
-## 文件结构
+## 快速开始
 
-```
-web/
-├── index.html      # 主页面
-├── styles.css      # 样式文件
-├── app.js          # JavaScript逻辑
-└── README.md       # 说明文档
-```
-
-## 使用方法
-
-### 快速启动
-
-#### 方式一：使用启动脚本
+### 方法一：使用启动脚本（推荐）
 
 ```bash
 cd web
 ./start.sh
 ```
 
-#### 方式二：使用 Node.js
+### 方法二：手动启动
 
 ```bash
+# 在项目根目录下
 cd web
-npm start
+npm install
+npm run dev
 ```
 
-#### 方式三：使用 npx 直接启动
+### 方法三：直接使用 http-server
 
 ```bash
-cd web
-npx http-server -p 8000
+# 在项目根目录下
+npx http-server -c-1 -p 8080 --cors
 ```
 
-然后在浏览器中访问 `http://localhost:8000/web/`
+## 访问地址
 
-**注意**：服务器从项目根目录启动，所以：
+启动后访问：http://localhost:8080/web/
 
-- 前端页面地址：`http://localhost:8000/web/`
-- 数据文件地址：`http://localhost:8000/records/`
+## 目录结构
 
-### 手动启动
-
-1. 确保 `records/` 目录下有 JSON 格式的图片记录文件
-2. 在浏览器中打开 `index.html`
-3. 页面会自动加载并显示所有图片记录
-4. 使用搜索功能筛选图片
+```
+web/
+├── index.html      # 主页面
+├── app.js          # Vue3 应用代码
+├── styles.css      # 样式文件
+├── start.sh        # 启动脚本
+├── package.json    # 依赖配置
+└── README.md       # 说明文档
+```
 
 ## 数据格式
 
-页面期望的 JSON 数据格式：
+应用会读取 `../records/` 目录下的 JSON 文件：
 
-```json
-[
-  {
-    "filename": "图片文件名",
-    "url": "图片完整URL",
-    "thumb_url": "缩略图URL",
-    "created_at": 时间戳,
-    "tags": ["标签1", "标签2"],
-    "desc": "图片描述",
-    "size_kb": 文件大小KB,
-    "width": 图片宽度,
-    "height": 图片高度,
-    "hash": "文件哈希值"
-  }
-]
-```
-
-## 搜索功能
-
-- **文件名搜索**: 支持按文件名关键词搜索
-- **标签搜索**: 支持按标签关键词搜索
-- **描述搜索**: 支持按描述内容搜索
-- **组合搜索**: 可以同时使用多个搜索条件
+- `index.json` - 索引文件，包含所有记录文件名
+- `*.json` - 图片记录文件，包含图片信息
 
 ## 技术栈
 
-- HTML5
-- CSS3 (Grid, Flexbox, 渐变, 动画)
-- 原生 JavaScript (ES6+)
-- 响应式设计
+- Vue 3 (Composition API)
+- 原生 JavaScript
+- CSS3 (Grid/Flexbox)
+- HTTP Server
 
 ## 浏览器支持
 
@@ -102,9 +72,3 @@ npx http-server -p 8000
 - Firefox 55+
 - Safari 12+
 - Edge 79+
-
-## 注意事项
-
-- 需要网络连接来加载图片
-- 如果无法访问 records 目录，会显示模拟数据
-- 图片加载失败时会显示占位符

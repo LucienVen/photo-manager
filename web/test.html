@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图床管理工具 - 测试页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-item { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔧 图床管理工具 - 服务器测试</h1>
+    
+    <div id="test-results">
+        <div class="test-item">
+            <h3>正在测试服务器连接...</h3>
+        </div>
+    </div>
+
+    <script>
+        async function runTests() {
+            const results = document.getElementById('test-results');
+            
+            // 测试1: 检查服务器是否运行
+            try {
+                const response = await fetch('/');
+                if (response.ok) {
+                    addTestResult('✅ 服务器连接正常', 'success');
+                } else {
+                    addTestResult(`❌ 服务器响应异常: ${response.status}`, 'error');
+                }
+            } catch (e) {
+                addTestResult(`❌ 无法连接到服务器: ${e.message}`, 'error');
+            }
+            
+            // 测试2: 检查 records 目录
+            try {
+                const response = await fetch('/records/');
+                if (response.ok) {
+                    addTestResult('✅ records 目录可访问', 'success');
+                } else {
+                    addTestResult(`❌ records 目录不可访问: ${response.status}`, 'error');
+                }
+            } catch (e) {
+                addTestResult(`❌ records 目录访问失败: ${e.message}`, 'error');
+            }
+            
+            // 测试3: 检查 index.json
+            try {
+                const response = await fetch('/records/index.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    addTestResult(`✅ index.json 加载成功，包含 ${data.length} 个文件`, 'success');
+                    console.log('index.json:', data);
+                } else {
+                    addTestResult(`❌ index.json 加载失败: ${response.status}`, 'error');
+                }
+            } catch (e) {
+                addTestResult(`❌ index.json 解析失败: ${e.message}`, 'error');
+            }
+            
+            // 测试4: 检查具体的数据文件
+            try {
+                const indexResponse = await fetch('/records/index.json');
+                if (indexResponse.ok) {
+                    const files = await indexResponse.json();
+                    if (files.length > 0) {
+                        const firstFile = files[0];
+                        const dataResponse = await fetch(`/records/${firstFile}`);
+                        if (dataResponse.ok) {
+                            const data = await dataResponse.json();
+                            addTestResult(`✅ 数据文件 ${firstFile} 加载成功，包含 ${data.length} 张图片`, 'success');
+                            console.log('Sample data:', data[0]);
+                        } else {
+                            addTestResult(`❌ 数据文件 ${firstFile} 加载失败: ${dataResponse.status}`, 'error');
+                        }
+                    } else {
+                        addTestResult('⚠️ 没有找到数据文件', 'error');
+                    }
+                }
+            } catch (e) {
+                addTestResult(`❌ 数据文件测试失败: ${e.message}`, 'error');
+            }
+        }
+        
+        function addTestResult(message, type) {
+            const results = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `test-item ${type}`;
+            div.innerHTML = `<h3>${message}</h3>`;
+            results.appendChild(div);
+        }
+        
+        // 运行测试
+        runTests();
+    </script>
+</body>
+</html>

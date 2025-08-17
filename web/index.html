@@ -3,83 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>图床管理工具 - 图片展示</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta name="description" content="图床管理工具 - 图片展示和管理" />
+    <title>图床管理工具 - Vue3</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <!-- Vue3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   </head>
   <body>
-    <div class="container">
-      <!-- 页面标题 -->
-      <header class="header">
-        <h1>📸 图床管理工具</h1>
-        <p>图片上传记录展示</p>
-      </header>
-
-      <!-- 搜索区域 -->
-      <section class="search-section">
-        <div class="search-form">
-          <div class="search-group">
-            <label for="nameSearch">文件名搜索:</label>
-            <input
-              type="text"
-              id="nameSearch"
-              placeholder="输入文件名关键词..."
-            />
-          </div>
-
-          <div class="search-group">
-            <label for="tagSearch">标签搜索:</label>
-            <input type="text" id="tagSearch" placeholder="输入标签关键词..." />
-          </div>
-
-          <div class="search-group">
-            <label for="descSearch">描述搜索:</label>
-            <input
-              type="text"
-              id="descSearch"
-              placeholder="输入描述关键词..."
-            />
-          </div>
-
-          <button type="button" id="searchBtn" class="search-btn">
-            🔍 搜索
-          </button>
-          <button type="button" id="clearBtn" class="clear-btn">🗑️ 清空</button>
-        </div>
-      </section>
-
-      <!-- 统计信息 -->
-      <section class="stats-section">
-        <div class="stats">
-          <span class="stat-item">
-            <strong>总图片数:</strong> <span id="totalCount">0</span>
-          </span>
-          <span class="stat-item">
-            <strong>显示图片数:</strong> <span id="filteredCount">0</span>
-          </span>
-          <span class="stat-item">
-            <strong>总大小:</strong> <span id="totalSize">0 KB</span>
-          </span>
-        </div>
-      </section>
-
-      <!-- 图片展示区域 -->
-      <section class="gallery-section">
-        <div id="loading" class="loading">正在加载数据...</div>
-        <div id="gallery" class="gallery"></div>
-        <div id="noResults" class="no-results" style="display: none">
-          没有找到匹配的图片
-        </div>
-      </section>
-    </div>
-
-    <!-- 图片详情模态框 -->
-    <div id="imageModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <div id="modalContent"></div>
-      </div>
-    </div>
-
-    <script src="app.js"></script>
+    <div id="app"></div>
+    <script src="./app.js"></script>
   </body>
 </html>

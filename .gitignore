@@ -127,7 +127,7 @@ Desktop.ini
 # 项目特定文件
 photo-bed/
 photo-manager/
-records/
+# records/
 *.json
 
 # 临时文档
@@ -139,3 +139,5 @@ test-images/
 test_images/
 
 bin/*
+
+node_modules

@@ -3,14 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/LucienVen/photo-manager/config"
-	"github.com/LucienVen/photo-manager/logger"
-	"github.com/LucienVen/photo-manager/utils"
-	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/LucienVen/photo-manager/config"
+	"github.com/LucienVen/photo-manager/logger"
+	"github.com/LucienVen/photo-manager/utils"
+	"github.com/spf13/cobra"
 )
 
 type PhotoRecord struct {
@@ -71,6 +72,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// 检查 record 目录存在
 
 	if !utils.IsImageFile(imagePath) {
 		panic(fmt.Errorf("image file %s is not valid", imagePath))
@@ -311,6 +314,14 @@ func ReadRecordsFromDir(dirPath string) ([]PhotoRecord, error) {
 }
 
 func IsHashExistsInRecords(dirPath string, targetHash string) (bool, PhotoRecord, error) {
+	// 检查目录是否存在
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		// 不存在就创建
+		if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
+			return false, PhotoRecord{}, err // 直接返回空
+		}
+	}
+
 	files, err := os.ReadDir(dirPath)
 	if err != nil {
 		return false, PhotoRecord{}, err

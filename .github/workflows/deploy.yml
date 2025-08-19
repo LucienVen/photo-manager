@@ -44,13 +44,13 @@ jobs:
             git pull origin main
 
             # 创建目标目录
-            mkdir -p /home/lxt/nginx/html/photo-manager/
+            mkdir -p /home/lxt/nginx-docker/html/photo-manager/
 
             # 拷贝前端文件到 Nginx 静态目录
-            cp -r web/* /home/lxt/nginx/html/photo-manager/
+            cp -r web/* /home/lxt/nginx-docker/html/photo-manager/
             
             # 拷贝 records 文件
-            cp -r records /home/lxt/nginx/html/photo-manager/
+            cp -r records /home/lxt/nginx-docker/html/photo-manager/
 
             # 重载 Nginx (可选)
             cd /home/lxt/nginx-docker

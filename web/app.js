@@ -20,6 +20,7 @@ createApp({
       try {
         // 获取索引文件
         const indexResponse = await fetch("/records/index.json");
+
         if (!indexResponse.ok) {
           throw new Error(`HTTP error! status: ${indexResponse.status}`);
         }
@@ -195,6 +196,7 @@ createApp({
       copyToClipboard,
       formatFileSize,
       formatDate,
+      loadImageData,
     };
   },
 

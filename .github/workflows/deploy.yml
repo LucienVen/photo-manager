@@ -1,0 +1,54 @@
+name: Deploy Frontend to Nginx
+
+on:
+  push:
+    branches:
+      - main  # 监听主分支 push
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 拉取代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2️⃣ 设置 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 3️⃣ 安装依赖
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./web
+
+      # 4️⃣ 构建前端（如果是纯 HTML/JS 可省略）
+    #   - name: Build frontend
+    #     run: npm run build
+    #     working-directory: ./web
+
+      # 5️⃣ 部署到服务器
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # 切换到项目目录
+            cd /home/lxt/project/photo-manager
+            git reset --hard
+            git pull origin main
+
+            # 拷贝前端文件到 Nginx 静态目录
+            cp -r web/* /home/lxt/nginx/html/photo-manager/
+            
+            # 拷贝 records 文件
+            cp -r records /home/lxt/nginx/html/photo-manager/
+
+            # 重载 Nginx (可选)
+            cd /home/lxt/nginx-docker
+            docker compose restart

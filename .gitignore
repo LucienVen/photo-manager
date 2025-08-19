@@ -125,9 +125,6 @@ ehthumbs.db
 Desktop.ini
 
 # 项目特定文件
-photo-bed/
-photo-manager/
-# records/
 *.json
 
 # 临时文档

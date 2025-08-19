@@ -43,6 +43,9 @@ jobs:
             git reset --hard
             git pull origin main
 
+            # 创建目标目录
+            mkdir -p /home/lxt/nginx/html/photo-manager/
+
             # 拷贝前端文件到 Nginx 静态目录
             cp -r web/* /home/lxt/nginx/html/photo-manager/
             

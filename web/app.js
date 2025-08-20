@@ -61,8 +61,8 @@ createApp({
       allImages.value = [
         {
           filename: "示例图片.jpg",
-          url: "https://via.placeholder.com/800x600/3498db/ffffff?text=示例图片",
-          thumb_url: "https://via.placeholder.com/300x200/3498db/ffffff?text=示例",
+          url: "",
+          thumb_url: "",
           created_at: Date.now() / 1000,
           tags: ["示例", "测试"],
           desc: "这是一个示例图片，用于演示功能",
@@ -291,7 +291,7 @@ createApp({
                 :src="img.thumb_url" 
                 :alt="img.filename" 
                 class="image-thumbnail"
-                @error="$event.target.src='https://via.placeholder.com/300x200/eee/999?text=加载失败'"
+                
               >
             </div>
             <div class="image-info">
@@ -322,7 +322,6 @@ createApp({
                 :src="modalImage.url" 
                 :alt="modalImage.filename" 
                 class="modal-image"
-                @error="e => e.target.src = 'https://via.placeholder.com/600x400/eee/999?text=图片加载失败'"
               >
             </div>
             <div class="modal-info">

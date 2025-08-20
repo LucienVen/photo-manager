@@ -16,22 +16,22 @@ createApp({
     async function loadImageData() {
       loading.value = true;
       errorMsg.value = "";
-      
+
       try {
         // 获取索引文件
-        const indexResponse = await fetch("/records/index.json");
+        const indexResponse = await fetch(`${window.location.origin}/records/index.json`);
 
         if (!indexResponse.ok) {
           throw new Error(`HTTP error! status: ${indexResponse.status}`);
         }
-        
+
         const files = await indexResponse.json();
         const allData = [];
-        
+
         // 加载所有记录文件
         for (const file of files) {
           try {
-            const res = await fetch(`/records/${file}`);
+            const res = await fetch(`${window.location.origin}/records/${file}`);
             if (res.ok) {
               const data = await res.json();
               allData.push(...data);
@@ -42,11 +42,11 @@ createApp({
             console.warn(`加载文件失败: ${file}`, e);
           }
         }
-        
+
         // 按创建时间排序（最新的在前）
         allImages.value = allData.sort((a, b) => b.created_at - a.created_at);
         filteredImages.value = [...allImages.value];
-        
+
       } catch (e) {
         console.error("加载数据失败:", e);
         errorMsg.value = "加载数据失败，请检查网络连接或刷新页面重试";
@@ -80,18 +80,18 @@ createApp({
       if (searchDebounce.value) {
         clearTimeout(searchDebounce.value);
       }
-      
+
       searchDebounce.value = setTimeout(() => {
         filteredImages.value = allImages.value.filter((img) => {
-          const nameMatch = !searchFilters.value.name || 
+          const nameMatch = !searchFilters.value.name ||
             img.filename.toLowerCase().includes(searchFilters.value.name.toLowerCase());
-          
-          const tagMatch = !searchFilters.value.tag || 
+
+          const tagMatch = !searchFilters.value.tag ||
             img.tags.some((t) => t.toLowerCase().includes(searchFilters.value.tag.toLowerCase()));
-          
-          const descMatch = !searchFilters.value.desc || 
+
+          const descMatch = !searchFilters.value.desc ||
             (img.desc && img.desc.toLowerCase().includes(searchFilters.value.desc.toLowerCase()));
-          
+
           return nameMatch && tagMatch && descMatch;
         });
       }, 300);
@@ -120,11 +120,11 @@ createApp({
       toast.className = 'toast';
       toast.textContent = message;
       document.body.appendChild(toast);
-      
+
       setTimeout(() => {
         toast.classList.add('show');
       }, 100);
-      
+
       setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
@@ -322,7 +322,7 @@ createApp({
                 :src="modalImage.url" 
                 :alt="modalImage.filename" 
                 class="modal-image"
-                @error="$event.target.src='https://via.placeholder.com/600x400/eee/999?text=图片加载失败'"
+                @error="e => e.target.src = 'https://via.placeholder.com/600x400/eee/999?text=图片加载失败'"
               >
             </div>
             <div class="modal-info">

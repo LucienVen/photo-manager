@@ -105,13 +105,33 @@ createApp({
 
     // 复制到剪贴板
     async function copyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        // HTTPS 或 localhost
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast("已复制链接到剪贴板！");
+          return;
+        } catch (err) {
+          console.error("Clipboard API 失败:", err);
+        }
+      }
+
+      // 不安全环境 (HTTP)，用 execCommand 兜底
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";  // 避免页面抖动
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
       try {
-        await navigator.clipboard.writeText(text);
-        showToast("已复制链接到剪贴板！");
+        document.execCommand("copy");
+        showToast("已复制链接到剪贴板！（降级方案）");
       } catch (err) {
         console.error("复制失败:", err);
         showToast("复制失败，请手动复制");
       }
+      document.body.removeChild(textarea);
     }
 
     // 显示提示信息
